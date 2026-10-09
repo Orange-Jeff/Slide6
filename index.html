@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<!-- Version 12.37 - Cleanup: removed AI components and dead code refs -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diamond Slide - Lobby</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="form-fields.css">
+    <style>
+        /* V12.29 - Shorter lobby, no fixed viewport height */
+        html, body {
+            height: auto;
+            overflow: auto;
+        }
+        .lobby-container {
+            height: auto;
+            max-height: none;
+            min-height: 500px;
+            overflow-y: visible;
+            box-sizing: border-box;
+        }
+        /* V12.34 - Compact 800px lobby form on three lines with aligned labels */
+        .lobby-section { max-width: 800px; margin: 0 auto 20px; }
+        .lobby-controls.lobby-form { display: block; }
+        .lobby-form { display: flex; flex-direction: column; gap: 2px; }
+        .lobby-form .form-row { display: grid; grid-template-columns: 160px 1fr; align-items: center; gap: 10px; }
+        .lobby-form label { margin: 0; color: #ffcc88; font-weight: 600; }
+        .lobby-form .field { display: flex; align-items: center; gap: 8px; }
+        .lobby-form .field input { flex: 1; }
+        .lobby-form .field input, .lobby-form select { width: 100%; }
+        .lobby-form .inline-btn { height: 36px; min-width: 40px; width: 40px; padding: 0; font-size: 1em; }
+        .lobby-form .actions { margin-top: 6px; }
+        /* V12.36 - Shift the three rows slightly left to avoid overflow */
+        .lobby-section { position: relative; left: -10px; }
+        /* V12.36 - Available Games full width with padding */
+        .lobby-columns { width: 100%; padding: 0 20px; box-sizing: border-box; justify-content: flex-start; }
+        .lobby-list-container { width: 100%; max-width: none !important; margin: 0 !important; }
+        /* Mobile tweaks: narrower label column to prevent overflow */
+        @media (max-width: 520px) {
+            .lobby-form .form-row { grid-template-columns: 120px 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="lobby-container">
+    <div class="lobby-header">
+        <img src="game.jpg" alt="Diamond Slide 5 Banner" class="banner-image">
+        <div class="game-title">
+            <h1>Diamond Slide</h1>
+            <p class="lead">Create a game room or request to join existing games.</p>
+        </div>
+        <button id="helpBtn" class="help-button">Help</button>
+        <button id="adminClearBtn" class="help-button" style="margin-left: 10px; display: none; background: #c0392b;">🗑️ Clear All</button>
+    </div>
+
+    <div class="lobby-section">
+        <div class="lobby-controls lobby-form">
+            <div class="form-row">
+                <label for="roomNameInput">Room Name:</label>
+                <div class="field">
+                    <input id="roomNameInput" placeholder="Room Name">
+                    <button id="randomNameBtn" type="button" title="Generate random Star Trek name" class="inline-btn">🎲</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <label for="gameModeSelect">Game Mode:</label>
+                <select id="gameModeSelect">
+                    <option value="online" selected>Online Game</option>
+                    <option value="computer">vs Computer</option>
+                    <option value="local">Local 2-Player</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label for="winConditionSelect">Win Condition:</label>
+                <select id="winConditionSelect">
+                    <option value="4" selected>4 in a Row Wins</option>
+                    <option value="5">5 in a Row Wins</option>
+                    <option value="6">6 in a Row Wins</option>
+                </select>
+            </div>
+            <div class="form-row actions">
+                <div></div>
+                <button id="createBtn" class="primary-action">Create Room</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- V12.28 - Single column for available games (join requests removed) -->
+        <div class="lobby-columns">
+        <div class="lobby-list-container">
+            <h2>Available Games</h2>
+            <p class="help-text">Click any game to join or watch</p>
+            <ul id="gamesList" class="game-list">
+                <li>Loading...</li>
+            </ul>
+        </div>
+    </div>
+    <!-- Hidden for JS compatibility -->
+    <ul id="requestsList" style="display:none;"></ul>
+
+</div>
+
+<script>
+    const roomNameInput = document.getElementById('roomNameInput');
+    const createBtn = document.getElementById('createBtn');
+    const gameModeSelect = document.getElementById('gameModeSelect');
+    const winConditionSelect = document.getElementById('winConditionSelect');
+    const gamesList = document.getElementById('gamesList');
+    const requestsList = document.getElementById('requestsList');
+    const helpBtn = document.getElementById('helpBtn');
+    const randomNameBtn = document.getElementById('randomNameBtn');
+    const adminClearBtn = document.getElementById('adminClearBtn');
+
+    const API_URL = 'api.php';
+
+    // Star Trek themed room name generator
+    const trekPrefixes = ['USS', 'NCC', 'NX', 'ISS', 'HMS', 'SS'];
+    const trekShips = ['Enterprise', 'Voyager', 'Defiant', 'Discovery', 'Reliant', 'Excelsior',
+        'Prometheus', 'Titan', 'Cerritos', 'Protostar', 'Stargazer', 'Phoenix', 'Shenzhou',
+        'Kelvin', 'Franklin', 'Vengeance', 'Constellation', 'Hood', 'Lexington', 'Potemkin',
+        'Yorktown', 'Farragut', 'Intrepid', 'Saratoga', 'Melbourne', 'Challenger', 'Buran'];
+    const trekLocations = ['Alpha Quadrant', 'Delta Quadrant', 'Deep Space', 'Sector 31',
+        'Neutral Zone', 'Bajoran', 'Cardassian', 'Romulan', 'Klingon', 'Vulcan', 'Andorian',
+        'Risa', 'Starbase', 'Utopia Planitia', 'Wolf 359', 'Khitomer', 'Qo\'noS',
+        'Ten Forward', 'Ready Room', 'Holodeck', 'Transporter Room', 'Sick Bay', 'Cargo Bay',
+        'Jefferies Tube', 'Shuttle Bay', 'Observation Lounge', 'Astrometrics'];
+    const trekSuffixes = ['Bridge', 'Mission', 'Protocol', 'Maneuver', 'Gambit', 'Directive',
+        'Incident', 'Experiment', 'Encounter', 'Expedition', 'Command', 'Fleet'];
+
+    function generateTrekName() {
+        const style = Math.floor(Math.random() * 3);
+        if (style === 0) {
+            // USS Ship style
+            const prefix = trekPrefixes[Math.floor(Math.random() * trekPrefixes.length)];
+            const ship = trekShips[Math.floor(Math.random() * trekShips.length)];
+            return `${prefix} ${ship}`;
+        } else if (style === 1) {
+            // Location + Suffix style
+            const location = trekLocations[Math.floor(Math.random() * trekLocations.length)];
+            const suffix = trekSuffixes[Math.floor(Math.random() * trekSuffixes.length)];
+            return `${location} ${suffix}`;
+        } else {
+            // Ship + number style
+            const ship = trekShips[Math.floor(Math.random() * trekShips.length)];
+            const num = Math.floor(Math.random() * 9000) + 1000;
+            return `${ship}-${num}`;
+        }
+    }
+
+    // Generate initial random name
+    roomNameInput.value = generateTrekName();
+
+    // Randomize button click
+    randomNameBtn.addEventListener('click', () => {
+        roomNameInput.value = generateTrekName();
+        roomNameInput.focus();
+    });
+
+    // Admin mode - requires password
+    let isAdminMode = false;
+    const ADMIN_PASSWORD = 'xyzzy';
+
+    // Check URL for admin hint (doesn't grant access, just shows button)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('admin')) {
+        adminClearBtn.style.display = 'inline-block';
+    }
+
+    // Admin clear all button - requires password
+    adminClearBtn.addEventListener('click', async () => {
+        // Prompt for password if not already authenticated
+        if (!isAdminMode) {
+            const enteredPassword = prompt('Enter admin password:');
+            if (enteredPassword !== ADMIN_PASSWORD) {
+                alert('Incorrect password.');
+                return;
+            }
+            isAdminMode = true;
+        }
+
+        if (!confirm('Are you sure you want to DELETE ALL GAMES? This cannot be undone!')) {
+            return;
+        }
+        try {
+            const res = await fetch(API_URL + '?action=admin_reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: ADMIN_PASSWORD })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                alert(`All games cleared! ${data.files_reset} games deleted.`);
+                fetchAndRenderLists();
+            } else {
+                alert('Clear failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (e) {
+            alert('Failed to connect to server.');
+        }
+    });
+
+    function saveSecret(gameId, secret, role) {
+        localStorage.setItem(`game_${gameId}_secret`, secret);
+        localStorage.setItem(`game_${gameId}_role`, role);
+    }
+
+    // navigateToGame: optional secret and role will be appended to help the game page persist identity
+    function navigateToGame(gameId, mode, connectN, secret, role) {
+        let extra = '';
+        if (mode && mode !== 'online') extra = `&mode=${encodeURIComponent(mode)}`;
+        if (connectN) extra += `&connectN=${encodeURIComponent(connectN)}`;
+        if (secret) extra += `&secret=${encodeURIComponent(secret)}`;
+        if (role) extra += `&role=${encodeURIComponent(role)}`;
+        window.location = `game.html?server=${encodeURIComponent(API_URL)}&id=${encodeURIComponent(gameId)}${extra}`;
+    }
+
+    async function fetchAndRenderLists() {
+        try {
+            const res = await fetch(API_URL + '?action=list');
+            const data = await res.json();
+            if (!data.ok) throw new Error(data.error || 'Failed to fetch lists');
+
+            renderGamesList([...(data.waiting || []), ...(data.active || [])]);
+            await fetchJoinRequests();
+        } catch (e) {
+            console.error("Could not fetch game lists:", e);
+            gamesList.innerHTML = '<li>Error loading games.</li>';
+        }
+    }
+
+    function renderGamesList(games) {
+        gamesList.innerHTML = '';
+        if (games.length === 0) {
+            gamesList.innerHTML = '<li>No games available.</li>';
+            return;
+        }
+        games.forEach(game => {
+            const li = document.createElement('li');
+            const isWaiting = game.status === 'waiting';
+            const isActive = game.status === 'active';
+
+            let statusText = '';
+            if (isWaiting) {
+                const timeleft = Math.max(0, 600 - (Date.now()/1000 - game.createdAt));
+                const minutes = Math.floor(timeleft / 60).toString().padStart(2, '0');
+                const seconds = Math.floor(timeleft % 60).toString().padStart(2, '0');
+                statusText = `[expires in ${minutes}:${seconds}]`;
+            } else if (isActive) {
+                statusText = `🟠 ${game.score ? game.score.orange : 0} - ${game.score ? game.score.blue : 0} 🔵`;
+            }
+
+            li.innerHTML = `
+                <span class="game-name">${game.name}</span>
+                <span class="game-status">${statusText}</span>
+            `;
+
+            const requestBtn = document.createElement('button');
+            requestBtn.textContent = isWaiting ? 'Join Game' : 'Watch Game';
+            requestBtn.onclick = () => joinGame(game.id, game.name, game.connectN);
+            li.appendChild(requestBtn);
+            gamesList.appendChild(li);
+        });
+    }
+
+    async function joinGame(gameId, gameName, connectN) {
+        // No player names used in this game; auto-join as player (Blue/Orange assigned by server)
+        const playerName = '';
+        try {
+            const res = await fetch(API_URL + '?action=join_now', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ gameId: gameId, playerName: playerName.trim(), type: 'join' })
+            });
+            const data = await res.json();
+            if (!data.ok) {
+                alert('Could not join: ' + (data.error || 'Unknown error'));
+                return;
+            }
+            if (data.role && (data.role === 'p1' || data.role === 'p2') && data.playerSecret) {
+                saveSecret(gameId, data.playerSecret, data.role);
+            } else if (data.role === 'watch') {
+                // store watcher role
+                saveSecret(gameId, '', 'watch');
+            }
+            // Navigate to game; client will pick up secret from localStorage
+            navigateToGame(gameId, 'online', connectN || 4, data.playerSecret || '', data.role || 'watch');
+        } catch (e) {
+            alert('Could not connect to server to join game.');
+            console.error('Join error', e);
+        }
+    }
+
+    // Handle direct join from URL parameter
+    function handleDirectJoin() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const joinGameId = urlParams.get('join');
+        if (joinGameId) {
+            // Remove the join parameter from URL to clean it up
+            const newUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, newUrl);
+            // Try to join the game
+            joinGame(joinGameId, 'Direct Join', 4);
+        }
+    }
+
+
+    // No join requests/approval needed. All games are joinable instantly.
+    function fetchJoinRequests() {
+        requestsList.innerHTML = '<li>All games are open to join or watch.</li>';
+    }
+
+    async function handleJoinRequest(gameId, gameName, isJoin) {
+        const playerName = prompt(`Enter your name to request to ${isJoin ? 'join' : 'watch'} "${gameName}":`);
+        if (!playerName) return;
+
+        try {
+            const res = await fetch(API_URL + '?action=request_join', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    gameId: gameId,
+                    playerName: playerName.trim(),
+                    type: isJoin ? 'join' : 'watch'
+                })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                alert(`Request sent! You'll be notified when the host responds.`);
+            } else {
+                alert('Error sending request: ' + (data.error || 'Unknown error'));
+            }
+        } catch (e) {
+            alert('Could not connect to server to send request.');
+        }
+    }
+
+    async function handleApproveRequest(requestId, approve) {
+        try {
+            const res = await fetch(API_URL + '?action=approve_request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    requestId: requestId,
+                    approve: approve
+                })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                if (approve && data.gameUrl) {
+                    alert(`Request approved! Player can join at: ${data.gameUrl}`);
+                } else {
+                    alert(approve ? 'Request approved!' : 'Request denied.');
+                }
+                fetchJoinRequests(); // Refresh the requests list
+            } else {
+                alert('Error processing request: ' + (data.error || 'Unknown error'));
+            }
+        } catch (e) {
+            alert('Could not connect to server to process request.');
+        }
+    }
+
+    createBtn.addEventListener('click', async () => {
+        const roomName = roomNameInput.value.trim();
+        if (!roomName) {
+            alert('Please enter a room name.');
+            return;
+        }
+
+        const mode = gameModeSelect.value;
+        const connectN = parseInt(winConditionSelect.value);
+
+        if (mode === 'computer' || mode === 'local') {
+            // For offline modes, navigate directly without server
+            navigateToGame('local_' + Date.now(), mode, connectN);
+            return;
+        }
+
+        try {
+            const res = await fetch(API_URL + '?action=create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: roomName,
+                    connectN: connectN
+                })
+            });
+            const data = await res.json();
+            if (data.ok && data.game && data.playerSecret) {
+                // Save secret locally and include in the URL so the newly-created game page always recognises the creator
+                saveSecret(data.game.id, data.playerSecret, 'p1');
+                navigateToGame(data.game.id, 'online', connectN, data.playerSecret, 'p1');
+            } else {
+                alert('Error creating game: ' + (data.error || 'Unknown error'));
+            }
+        } catch (e) {
+            alert('Could not connect to server to create game.');
+        }
+    });
+
+    // Help button functionality
+    helpBtn.addEventListener('click', () => {
+        window.open('help.html', '_blank');
+    });
+
+    // Download button removed in V12.34
+
+    // Fetch lists on page load and then every 5 seconds
+    fetchAndRenderLists();
+    setInterval(fetchAndRenderLists, 5000);
+
+    // Handle direct join from URL
+    handleDirectJoin();
+
+</script>
+</body>
+</html>

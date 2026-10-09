@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diamond Slide 5 - Download</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .download-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a1d;
+            border-radius: 12px;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+        .download-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 153, 0, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #ff9900;
+        }
+        .download-section h2 {
+            color: #ff9900;
+            margin-top: 0;
+        }
+        .download-button {
+            background: linear-gradient(135deg, #ff9900, #e68a00);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            transition: all 0.3s ease;
+        }
+        .download-button:hover {
+            background: linear-gradient(135deg, #ffad33, #ff9900);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 153, 0, 0.4);
+        }
+        .file-list {
+            background: #2a2a2d;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .file-size {
+            color: #888;
+            font-size: 12px;
+        }
+        .back-button {
+            background: linear-gradient(135deg, #666, #555);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .back-button:hover {
+            background: linear-gradient(135deg, #777, #666);
+        }
+    </style>
+</head>
+<body>
+<div class="download-container">
+    <button class="back-button" onclick="window.location.href='index.html'">← Back to Game</button>
+
+    <h1 style="color: #ff9900; text-align: center;">Diamond Slide 5 - Download</h1>
+
+    <div class="download-section">
+        <h2>📦 Complete Game Package</h2>
+        <p>Download the complete Diamond Slide 5 game to run locally on your computer or host on your own server.</p>
+
+        <div class="file-list">
+            <strong>Package Contents:</strong><br>
+            <em>📁 Root folder (WordPress plugin files):</em><br>
+            📄 nb-diamond-slide-5.php <span class="file-size">(WordPress plugin)</span><br>
+            📄 admin.js <span class="file-size">(admin media uploader)</span><br>
+            📄 readme.txt <span class="file-size">(WordPress readme)</span><br><br>
+            <em>📁 game/ folder (game files):</em><br>
+            📄 index.html <span class="file-size">(lobby page)</span><br>
+            📄 game.html <span class="file-size">(game board)</span><br>
+            📄 game.js <span class="file-size">(game logic)</span><br>
+            📄 style.css <span class="file-size">(styling)</span><br>
+            📄 form-fields.css <span class="file-size">(form styling)</span><br>
+            📄 api.php <span class="file-size">(server API for online play)</span><br>
+            📄 common.php <span class="file-size">(shared PHP functions)</span><br>
+            📄 help.html <span class="file-size">(help guide)</span><br>
+            📄 download.html <span class="file-size">(this page)</span><br>
+            🖼️ game.jpg <span class="file-size">(banner image)</span><br>
+            🔊 *.wav <span class="file-size">(sound effect files)</span>
+        </div>
+
+        <p><strong>This download works as BOTH:</strong></p>
+        <ul>
+            <li>🌐 <strong>Standalone web app</strong> - Upload to any PHP server, open game/index.html</li>
+            <li>🔌 <strong>WordPress plugin</strong> - Upload folder to wp-content/plugins/ and activate</li>
+        </ul>
+
+        <a href="#" class="download-button" onclick="showFileList()">
+            📋 Show Complete File List
+        </a>
+    </div>
+
+    <div class="download-section">
+        <h2>🎵 Sound Files</h2>
+        <p><strong>Original Design by OrangeJeff</strong> - Sound files should be placed in the root directory:</p>
+
+        <div class="file-list">
+            📢 chip-drop.wav - Piece placement sound<br>
+            📢 chip-push.wav - Piece sliding sound<br>
+            📢 chip-fall.wav - Piece falling off board sound<br>
+            📢 win.wav - Victory celebration sound
+        </div>
+
+        <p><strong>Audio Requirements:</strong></p>
+        <ul>
+            <li>Format: WAV or MP3</li>
+            <li>Duration: 1-3 seconds recommended</li>
+            <li>Quality: 44.1kHz, 16-bit</li>
+            <li>Size: Under 100KB each</li>
+            <li><strong>Location: Place directly in root folder (not in sounds/ subfolder)</strong></li>
+        </ul>
+    </div>
+
+    <div class="download-section">
+        <h2>🚀 Installation Instructions</h2>
+        <h3>Local Play (Offline)</h3>
+        <ol>
+            <li>Download and extract the ZIP file</li>
+            <li>Open <code>index.html</code> in any modern web browser</li>
+            <li>Play locally with computer AI or pass-and-play</li>
+        </ol>
+
+        <h3>Server Hosting (Online Multiplayer)</h3>
+        <ol>
+            <li>Upload all files to your web server</li>
+            <li>Ensure your server supports PHP for multiplayer features</li>
+            <li>Configure the API endpoint in <code>game.js</code> if needed</li>
+            <li>Players can join games via your server URL</li>
+        </ol>
+    </div>
+
+    <div class="download-section">
+        <h2>📋 System Requirements</h2>
+        <ul>
+            <li><strong>Browser:</strong> Chrome 80+, Firefox 75+, Safari 13+, Edge 80+</li>
+            <li><strong>JavaScript:</strong> Must be enabled</li>
+            <li><strong>Storage:</strong> ~100KB for game files</li>
+            <li><strong>Network:</strong> Internet connection for online multiplayer only</li>
+        </ul>
+    </div>
+
+    <div class="download-section">
+        <h2>📝 License & Credits</h2>
+        <p>Diamond Slide 5 is provided as-is for personal and educational use.</p>
+        <ul>
+            <li>Game mechanics: Original design</li>
+            <li>Graphics: CSS-based, no external assets</li>
+            <li>Sounds: User-provided (placeholders included)</li>
+            <li>Code: JavaScript, HTML5, CSS3</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; padding: 20px; background: rgba(255, 153, 0, 0.1); border-radius: 8px;">
+        <h3 style="color: #ff9900;">Ready to Download?</h3>
+        <p>Get the complete game package and start playing offline or host your own server!</p>
+        <button class="download-button" onclick="downloadGameFiles()">📥 Download Now</button>
+    </div>
+</div>
+
+<script>
+function showFileList() {
+    alert('Complete File List for Diamond Slide 5:\n\n' +
+          'Required Files:\n' +
+          '• index.html - Lobby/main page\n' +
+          '• game.html - Game board page\n' +
+          '• game.js - Game logic & AI\n' +
+          '• style.css - Main styling\n' +
+          '• form-fields.css - Form styling\n' +
+          '• api.php - Server API (online play)\n' +
+          '• common.php - Shared PHP functions\n' +
+          '• help.html - Help documentation\n' +
+          '• download.html - This page\n' +
+          '• game.jpg - Banner image\n\n' +
+          'Sound Files (in game folder):\n' +
+          '• chip-drop.wav\n' +
+          '• chip-push.wav\n' +
+          '• chip-fall.wav\n' +
+          '• win.wav\n\n' +
+          'WordPress Plugin Files (in root):\n' +
+          '• nb-diamond-slide-5.php\n' +
+          '• admin.js\n' +
+          '• readme.txt');
+}
+
+function downloadGameFiles() {
+    // Try to download the ZIP file from parent folder
+    const zipUrl = '../DiamondSlide5.zip';
+
+    // Create a link and trigger download
+    const a = document.createElement('a');
+    a.href = zipUrl;
+    a.download = 'DiamondSlide5.zip';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Show message about what's included
+    setTimeout(() => {
+        alert('Download started!\n\n' +
+              'The ZIP includes:\n' +
+              '✅ Complete standalone web game\n' +
+              '✅ WordPress plugin (just upload to /plugins/)\n' +
+              '✅ All sounds and graphics\n' +
+              '✅ Help documentation\n\n' +
+              'For standalone: Upload to any PHP server and open game/index.html\n' +
+              'For WordPress: Upload entire folder to wp-content/plugins/ and activate');
+    }, 500);
+}
+</script>
+</body>
+</html>

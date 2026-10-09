@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<!-- Version 12.40 - One-line turn bar with orange/blue dots around turn bubble and inline status -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diamond Slide</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="form-fields.css">
+    <style>
+        /* V12.32 - Mobile-friendly: natural page scrolling */
+        html, body {
+            height: auto !important;
+            min-height: 100% !important;
+            overflow: auto !important;
+        }
+        .game-layout {
+            min-height: 100vh !important;
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+            box-sizing: border-box;
+        }
+        /* V12.32 - Responsive player boxes - shrink on mobile */
+        .player-box {
+            width: 200px;
+            min-width: 120px;
+            max-width: 200px;
+            flex: 1 1 auto;
+        }
+
+        /* V12.32 - Header goes vertical on small screens */
+        @media (max-width: 700px) {
+            .game-header {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 10px !important;
+                padding: 10px !important;
+            }
+            .player-box {
+                width: 100% !important;
+                max-width: 300px !important;
+                min-width: auto !important;
+                flex: 0 0 auto !important;
+            }
+            .header-center-column {
+                order: -1 !important;
+                margin: 0 !important;
+            }
+            .header-center-column h1 {
+                font-size: 1.3em !important;
+            }
+            .center-controls {
+                flex-wrap: wrap !important;
+                gap: 6px !important;
+            }
+            .center-controls button {
+                width: auto !important;
+                min-width: 60px !important;
+                padding: 6px 10px !important;
+                font-size: 0.8em !important;
+            }
+            .turn-indicator-inline {
+                min-width: 100px !important;
+            }
+        }
+        /* V12.39 - Score display with centered dashes between dot and number */
+        .score-display { display: flex; align-items: center; gap: 4px; font-weight: 600; min-width: 60px; justify-content: center; }
+        .score-display .player-circle { width: 14px; height: 14px; }
+        .score-display span:nth-child(2) { font-size: 1em; color: #aaa; }
+        .blue-score { flex-direction: row-reverse; }
+        .score-value { font-size: 1.1em; color: #ffcc88; }
+        /* V12.39 - Compact command bar with centered layout, no orange border */
+        .center-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            margin: 8px auto 10px;
+            width: 100%;
+            max-width: 800px;
+            box-sizing: border-box;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            box-shadow: none;
+        }
+        .top-actions { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .turn-line { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; }
+        .center-controls button {
+            padding: 7px 14px;
+            font-size: 0.9em;
+            background-color: #4a637b;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            min-width: 96px;
+            text-align: center;
+            flex-shrink: 0;
+            height: 38px;
+        }
+        .center-controls button:hover {
+            background-color: #5b7a99;
+        }
+        /* New Game button orange themed */
+        .center-controls #new-game {
+            min-width: 110px;
+            background: linear-gradient(135deg, #ff9900, #e68a00);
+        }
+        .center-controls #new-game:hover {
+            background: linear-gradient(135deg, #ffad33, #ff9900);
+        }
+        /* V12.28 - Inline turn indicator in center controls */
+        .turn-indicator-inline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            border: 2px solid #ff9900;
+            min-width: 140px;
+            min-height: 38px;
+            justify-content: center;
+            box-shadow: inset 0 0 8px rgba(255, 153, 0, 0.25);
+        }
+        .you-are-inline { display: flex; align-items: center; gap: 8px; }
+        /* V12.36 - Removed large player box outlines */
+        .turn-indicator-inline .player-circle {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+        }
+        .turn-indicator-inline #turn-text {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #ff9900;
+        }
+        .turn-indicator-inline.blue-turn {
+            border-color: #66aaff;
+        }
+        .turn-indicator-inline.blue-turn #turn-text {
+            color: #66aaff;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-layout">
+        <header class="game-header">
+            <div class="score-display orange-score">
+                <span class="player-circle orange"></span>
+                <span>-</span>
+                <span id="p1-score" class="score-value">0</span>
+            </div>
+
+            <div class="header-center-column">
+                <h1>Diamond Slide</h1>
+                <span id="room-name" class="room-name"></span>
+                <div id="win-condition" class="win-condition">4 in a Row Wins</div>
+            </div>
+
+            <div class="score-display blue-score">
+                <span id="p2-score" class="score-value">0</span>
+                <span>-</span>
+                <span class="player-circle blue"></span>
+            </div>
+        </header>
+
+        <!-- V12.28 - Combined controls and turn indicator on one line -->
+        <div class="center-controls">
+            <div class="top-actions">
+                <button id="new-game">New Game</button>
+                <button id="pause-game">Pause</button>
+                <button id="forfeit-btn">Forfeit</button>
+                <button id="lobby-btn-main">Lobby</button>
+                <button id="helpBtnGame">Help</button>
+            </div>
+
+            <div class="turn-line">
+                <span class="player-circle orange"></span>
+                <div id="turn-indicator" class="turn-indicator-inline">
+                    <span id="turn-text">Orange's Turn</span>
+                </div>
+                <span class="player-circle blue"></span>
+                <div id="you-are-inline" class="you-are-inline">
+                    <span id="you-are" class="you-are">You are: <strong id="you-are-color">Spectator</strong></span>
+                    <span id="you-are-dot" class="you-are-dot"></span>
+                    <span id="turn-timer" class="turn-timer"></span>
+                </div>
+            </div>
+        </div>
+        <!-- Hidden container for JS compatibility -->
+        <div id="turn-indicator-container" style="display:none;"></div>
+
+        <!-- You-are moved into top bar in V12.34 -->
+
+
+    <!-- Game status messages -->
+    <div id="game-status" class="game-status">Ready to play!</div>
+
+    <!-- In-game warning/error message box -->
+    <div id="game-message-box" class="game-message-box" style="display:none;"></div>
+
+    <main id="game-container">
+        <!-- Centered New Game button below red line -->
+        <div style="width:100%;text-align:center;margin:24px 0 8px 0;">
+
+        </div>
+            <!-- Sound Effects -->
+            <audio id="sound-chip-drop" src="chip-drop.wav" preload="auto" onerror="console.log('Failed to load chip-drop.wav')"></audio>
+            <audio id="sound-chip-push" src="chip-push.wav" preload="auto" onerror="console.log('Failed to load chip-push.wav')"></audio>
+            <audio id="sound-chip-fall" src="chip-fall.wav" preload="auto" onerror="console.log('Failed to load chip-fall.wav')"></audio>
+            <audio id="sound-win" src="win.wav" preload="auto" onerror="console.log('Failed to load win.wav')"></audio>
+            <!-- NOTE: You need to provide the sound files in the root folder -->
+
+            <!-- Version 13.5 - Quarter turn rotation for diamond theme -->
+            <div id="diamond-rotator">
+                <div id="board-area">
+                    <!-- Selectors will be dynamically created here -->
+                    <div id="game-board-wrapper">
+                        <div id="game-board"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Timer modals will be injected here -->
+
+            <div id="watchers-info" class="watchers-info">
+                <span id="watchers-count">Watchers: 0</span>
+            </div>
+        </main>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

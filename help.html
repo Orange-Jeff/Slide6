@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diamond Slide 5 - Help</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .help-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a1d;
+            border-radius: 12px;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+        .help-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 153, 0, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #ff9900;
+        }
+        .help-section h2 {
+            color: #ff9900;
+            margin-top: 0;
+        }
+        .help-section h3 {
+            color: #ffad33;
+            margin-top: 20px;
+        }
+        .key-combo {
+            background: #333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #ff9900;
+        }
+        .back-button {
+            background: linear-gradient(135deg, #ff9900, #e68a00);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .back-button:hover {
+            background: linear-gradient(135deg, #ffad33, #ff9900);
+        }
+    </style>
+</head>
+<body>
+<div class="help-container">
+    <button class="back-button" onclick="window.close()">← Back to Lobby</button>
+
+    <h1 style="color: #ff9900; text-align: center;">Diamond Slide 5 - Help Guide</h1>
+
+    <div class="help-section">
+        <h2>🎯 Game Objective</h2>
+        <p>Connect 4 or 5 pieces in a row (depending on game settings) by dropping pieces from the edges of the diamond-shaped board. Pieces slide until they hit another piece or the board edge.</p>
+    </div>
+
+    <div class="help-section">
+        <h2>🎮 How to Play</h2>
+        <h3>Making Moves</h3>
+        <ul>
+            <li><strong>Click</strong> on any orange selector around the board edges</li>
+            <li><strong>Keyboard:</strong> Use <span class="key-combo">1-6</span> for top selectors, <span class="key-combo">A-F</span> for bottom selectors</li>
+            <li><strong>Arrow Keys:</strong> Navigate between selectors, <span class="key-combo">Space</span> or <span class="key-combo">Enter</span> to drop</li>
+        </ul>
+
+        <h3>Game Modes</h3>
+        <ul>
+            <li><strong>Online Game:</strong> Play against other players worldwide</li>
+            <li><strong>vs Computer:</strong> Play against AI opponent</li>
+            <li><strong>Local 2-Player:</strong> Pass-and-play on same device</li>
+        </ul>
+    </div>
+
+    <div class="help-section">
+        <h2>🌐 Online Multiplayer</h2>
+        <h3>Creating Games</h3>
+        <ul>
+            <li>Enter a room name and select game settings</li>
+            <li>Click "Create Room" to start hosting</li>
+            <li>Share the game URL with friends</li>
+        </ul>
+
+        <h3>Joining Games</h3>
+        <ul>
+            <li>Browse available games in the lobby</li>
+            <li>Click any game to request to join as player or watcher</li>
+            <li>Wait for the host to approve your request</li>
+        </ul>
+
+        <h3>Watching Games</h3>
+        <ul>
+            <li>Select "Watch" when requesting to join a game</li>
+            <li>Watch live gameplay without participating</li>
+            <li>Watcher count is displayed in the game</li>
+        </ul>
+    </div>
+
+    <div class="help-section">
+        <h2>🎲 Game Features</h2>
+        <h3>Diamond Board</h3>
+        <ul>
+            <li>6x6 grid rotated 45 degrees for unique gameplay</li>
+            <li>Pieces slide from edges until they hit obstacles</li>
+            <li>Strategic placement creates blocking opportunities</li>
+        </ul>
+
+        <h3>Game Controls</h3>
+        <ul>
+            <li><strong>New Game:</strong> Start fresh without returning to lobby</li>
+            <li><strong>Forfeit:</strong> Concede the current game</li>
+            <li><strong>Save/Load:</strong> Save game state for later</li>
+            <li><strong>AI Analysis:</strong> Export game for advanced analysis</li>
+        </ul>
+    </div>
+
+    <div class="help-section">
+        <h2>🔧 Tips & Strategy</h2>
+        <ul>
+            <li><strong>Control the Center:</strong> Central positions offer more connection opportunities</li>
+            <li><strong>Block Opponents:</strong> Watch for their potential winning moves</li>
+            <li><strong>Plan Ahead:</strong> Consider how pieces will slide and stack</li>
+            <li><strong>Use Edges:</strong> Edge positions can be harder to block</li>
+            <li><strong>Create Forks:</strong> Set up multiple winning threats simultaneously</li>
+        </ul>
+    </div>
+
+    <div class="help-section">
+        <h2>🎵 Sound Effects</h2>
+        <p>The game includes immersive sound effects for:</p>
+        <ul>
+            <li>Piece dropping and sliding</li>
+            <li>Pieces being pushed off the board</li>
+            <li>Victory celebrations</li>
+        </ul>
+        <p><em>Note: Make sure your browser allows audio playback for the best experience.</em></p>
+    </div>
+
+    <div class="help-section">
+        <h2>❓ Troubleshooting</h2>
+        <h3>Connection Issues</h3>
+        <ul>
+            <li>Refresh the page if games don't load</li>
+            <li>Check your internet connection for online games</li>
+            <li>Try creating a local game if server is unavailable</li>
+        </ul>
+
+        <h3>Game Not Responding</h3>
+        <ul>
+            <li>Make sure it's your turn (check the turn indicator)</li>
+            <li>Try clicking directly on selectors instead of using keyboard</li>
+            <li>Refresh the page to reconnect to online games</li>
+        </ul>
+    </div>
+
+    <div class="help-section">
+        <h2>✏️ Customization</h2>
+        <p>This game is open source and can be modified to suit your needs! Feel free to:</p>
+        <ul>
+            <li>Change colors, fonts, and styling in <code>style.css</code></li>
+            <li>Adjust game rules and AI behavior in <code>game.js</code></li>
+            <li>Customize the board size or win conditions</li>
+            <li>Add your own sound effects</li>
+            <li>Modify the UI layout in the HTML files</li>
+        </ul>
+        <p>The code is well-commented and designed to be hackable!</p>
+    </div>
+
+    <div class="help-section">
+        <h2>👤 Credits</h2>
+        <p><strong>Written by OrangeJeff</strong> and various AI models in VS Code using natural language programming.</p>
+        <p><em>November 30th, 2025</em></p>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; padding: 20px; background: rgba(255, 153, 0, 0.1); border-radius: 8px;">
+        <h3 style="color: #ff9900;">Ready to Play?</h3>
+        <p>Close this help window and start your first game!</p>
+        <button class="back-button" onclick="window.close()">Return to Lobby</button>
+    </div>
+</div>
+</body>
+</html>
